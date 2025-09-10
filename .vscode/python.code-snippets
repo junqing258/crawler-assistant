@@ -1,0 +1,162 @@
+{
+    "FastAPI Route": {
+        "prefix": "route",
+        "body": [
+            "@router.${1|get,post,put,delete,patch|}(\"${2:/endpoint}\")",
+            "async def ${3:function_name}(",
+            "    ${4:# parameters}",
+            ") -> ${5:dict}:",
+            "    \"\"\"${6:Description}\"\"\"",
+            "    ${7:# implementation}",
+            "    return {\"success\": True}",
+            ""
+        ],
+        "description": "创建FastAPI路由"
+    },
+    "Pytest Test Function": {
+        "prefix": "test",
+        "body": [
+            "def test_${1:function_name}(${2:client}):",
+            "    \"\"\"${3:Test description}\"\"\"",
+            "    # Arrange",
+            "    ${4:# test setup}",
+            "    ",
+            "    # Act",
+            "    ${5:# action}",
+            "    ",
+            "    # Assert",
+            "    ${6:assert result is not None}",
+            ""
+        ],
+        "description": "创建Pytest测试函数"
+    },
+    "Pytest Async Test": {
+        "prefix": "atest",
+        "body": [
+            "@pytest.mark.asyncio",
+            "async def test_${1:function_name}(${2:client}):",
+            "    \"\"\"${3:Test description}\"\"\"",
+            "    # Arrange",
+            "    ${4:# test setup}",
+            "    ",
+            "    # Act",
+            "    ${5:# action}",
+            "    ",
+            "    # Assert",
+            "    ${6:assert result is not None}",
+            ""
+        ],
+        "description": "创建异步Pytest测试函数"
+    },
+    "Pydantic Model": {
+        "prefix": "model",
+        "body": [
+            "class ${1:ModelName}(BaseModel):",
+            "    \"\"\"${2:Model description}\"\"\"",
+            "    ",
+            "    ${3:field_name}: ${4:str} = Field(..., description=\"${5:Field description}\")",
+            "    ",
+            "    class Config:",
+            "        json_schema_extra = {",
+            "            \"example\": {",
+            "                \"${3:field_name}\": \"${6:example_value}\"",
+            "            }",
+            "        }",
+            ""
+        ],
+        "description": "创建Pydantic模型"
+    },
+    "SQLAlchemy Model": {
+        "prefix": "dbmodel",
+        "body": [
+            "class ${1:ModelName}(Base):",
+            "    \"\"\"${2:Model description}\"\"\"",
+            "    ",
+            "    __tablename__ = \"${3:table_name}\"",
+            "    ",
+            "    id: Mapped[int] = mapped_column(primary_key=True)",
+            "    ${4:field_name}: Mapped[${5:str}] = mapped_column(${6:String(255)}, nullable=${7|True,False|})",
+            "    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())",
+            "    updated_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())",
+            ""
+        ],
+        "description": "创建SQLAlchemy模型"
+    },
+    "Logger Setup": {
+        "prefix": "logger",
+        "body": [
+            "import logging",
+            "",
+            "logger = logging.getLogger(__name__)",
+            ""
+        ],
+        "description": "设置日志记录器"
+    },
+    "Try Catch Block": {
+        "prefix": "try",
+        "body": [
+            "try:",
+            "    ${1:# code that might raise an exception}",
+            "except ${2:Exception} as e:",
+            "    logger.error(f\"${3:Error message}: {e}\")",
+            "    ${4:# error handling}",
+            ""
+        ],
+        "description": "创建异常处理块"
+    },
+    "Async Function": {
+        "prefix": "async",
+        "body": [
+            "async def ${1:function_name}(${2:parameters}) -> ${3:return_type}:",
+            "    \"\"\"${4:Function description}\"\"\"",
+            "    ${5:# implementation}",
+            "    return ${6:result}",
+            ""
+        ],
+        "description": "创建异步函数"
+    },
+    "Environment Variable": {
+        "prefix": "env",
+        "body": [
+            "${1:VARIABLE_NAME}: ${2:str} = Field(env=\"${1:VARIABLE_NAME}\")",
+            ""
+        ],
+        "description": "环境变量字段"
+    },
+    "Dependency Injection": {
+        "prefix": "depend",
+        "body": [
+            "${1:dependency_name}: ${2:DependencyType} = Depends(${3:get_dependency})",
+            ""
+        ],
+        "description": "FastAPI依赖注入"
+    },
+    "API Response": {
+        "prefix": "response",
+        "body": [
+            "return JSONResponse(",
+            "    status_code=${1:200},",
+            "    content={",
+            "        \"success\": ${2:True},",
+            "        \"message\": \"${3:Operation successful}\",",
+            "        \"data\": ${4:result}",
+            "    }",
+            ")",
+            ""
+        ],
+        "description": "API响应"
+    },
+    "Fixture": {
+        "prefix": "fixture",
+        "body": [
+            "@pytest.fixture",
+            "def ${1:fixture_name}():",
+            "    \"\"\"${2:Fixture description}\"\"\"",
+            "    ${3:# setup}",
+            "    yield ${4:value}",
+            "    ${5:# teardown}",
+            ""
+        ],
+        "description": "创建Pytest fixture"
+    }
+}

@@ -1,0 +1,176 @@
+@startuml AI_Crawler_Assistant_Architecture
+
+!define RECTANGLE class
+
+title AI Crawler Assistant - 系统架构图
+
+' 外部实体
+actor User as "用户"
+cloud "招聘网站" as JobSites
+cloud "AI服务" as AIServices {
+  [OpenAI GPT-4] as OpenAI
+  [Computer Vision] as CV
+}
+
+' 主要系统组件
+package "AI Crawler Assistant" {
+  
+  ' API Gateway层
+  package "API Gateway Layer" {
+    [FastAPI Server] as API
+    [Authentication] as Auth
+    [Rate Limiting] as RateLimit
+    [Request Validation] as Validation
+  }
+  
+  ' 核心业务层
+  package "Core Business Layer" {
+    
+    ' AI分析模块
+    package "AI Analysis Module" {
+      [Page Structure Analyzer] as PageAnalyzer
+      [Selector Generator] as SelectorGen
+      [Element Identifier] as ElementID
+      [Pattern Recognition] as PatternRec
+    }
+    
+    ' 爬虫引擎
+    package "Crawler Engine" {
+      [Browser Controller] as BrowserCtrl
+      [Data Extractor] as DataExtractor
+      [Pagination Handler] as Pagination
+      [Error Handler] as ErrorHandler
+    }
+    
+    ' 数据处理模块
+    package "Data Processing Module" {
+      [Data Validator] as DataValidator
+      [Data Cleaner] as DataCleaner
+      [Data Transformer] as DataTransformer
+      [Export Manager] as ExportMgr
+    }
+    
+    ' 配置管理
+    package "Configuration Management" {
+      [Selector Config] as SelectorConfig
+      [Site Templates] as SiteTemplates
+      [Crawl Strategies] as CrawlStrategies
+    }
+  }
+  
+  ' 数据存储层
+  package "Data Storage Layer" {
+    database "PostgreSQL" as DB {
+      [Jobs Table] as JobsTable
+      [Sites Table] as SitesTable
+      [Selectors Table] as SelectorsTable
+      [Crawl Logs] as LogsTable
+    }
+    
+    database "Redis Cache" as Cache {
+      [Session Data] as SessionCache
+      [Selector Cache] as SelectorCache
+      [Rate Limit Cache] as RateLimitCache
+    }
+    
+    storage "File Storage" as FileStore {
+      [Export Files] as ExportFiles
+      [Screenshots] as Screenshots
+      [Templates] as Templates
+    }
+  }
+  
+  ' Browser-use集成层
+  package "Browser Automation Layer" {
+    [browser-use Agent] as BrowserUse
+    [Playwright Engine] as Playwright
+    [Stealth Mode] as Stealth
+    [Proxy Manager] as ProxyMgr
+  }
+  
+  ' 监控和日志
+  package "Monitoring & Logging" {
+    [Performance Monitor] as PerfMon
+    [Error Tracker] as ErrorTracker
+    [Audit Logger] as AuditLog
+    [Metrics Collector] as Metrics
+  }
+}
+
+' 外部服务连接
+User --> API : "提交URL\n获取数据"
+API --> JobSites : "访问职位页面"
+PageAnalyzer --> OpenAI : "分析页面结构"
+ElementID --> CV : "视觉元素识别"
+
+' 内部组件关系
+API --> Auth
+API --> RateLimit
+API --> Validation
+API --> PageAnalyzer : "启动页面分析"
+
+PageAnalyzer --> SelectorGen : "生成选择器"
+SelectorGen --> ElementID
+ElementID --> PatternRec
+PageAnalyzer --> SelectorConfig : "保存选择器配置"
+
+API --> BrowserCtrl : "启动爬虫任务"
+BrowserCtrl --> BrowserUse : "控制浏览器"
+BrowserUse --> Playwright
+BrowserUse --> Stealth
+BrowserUse --> ProxyMgr
+
+BrowserCtrl --> DataExtractor
+DataExtractor --> Pagination
+DataExtractor --> ErrorHandler
+DataExtractor --> DataValidator
+
+DataValidator --> DataCleaner
+DataCleaner --> DataTransformer
+DataTransformer --> ExportMgr
+
+' 数据存储关系
+SelectorConfig --> SelectorsTable
+DataTransformer --> JobsTable
+BrowserCtrl --> LogsTable
+ErrorHandler --> LogsTable
+
+BrowserCtrl --> SessionCache
+SelectorGen --> SelectorCache
+RateLimit --> RateLimitCache
+
+ExportMgr --> ExportFiles
+BrowserCtrl --> Screenshots
+SelectorConfig --> Templates
+
+' 监控关系
+API --> PerfMon
+ErrorHandler --> ErrorTracker
+BrowserCtrl --> AuditLog
+DataExtractor --> Metrics
+
+' 数据流标注
+note right of PageAnalyzer
+  1. 接收URL
+  2. 加载页面
+  3. AI分析页面结构
+  4. 识别关键元素
+  5. 生成CSS选择器
+end note
+
+note right of BrowserCtrl
+  1. 使用browser-use代理
+  2. 模拟真实用户行为
+  3. 处理JavaScript渲染
+  4. 支持反爬虫策略
+  5. 自动翻页处理
+end note
+
+note right of DataExtractor
+  1. 根据选择器提取数据
+  2. 数据清洗和验证
+  3. 结构化数据输出
+  4. 支持多种导出格式
+end note
+
+@enduml

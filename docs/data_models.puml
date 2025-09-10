@@ -1,0 +1,258 @@
+@startuml Data_Models
+
+title AI Crawler Assistant - 数据模型设计
+
+!define PRIMARY_KEY(x) <b><color:red>x</color></b>
+!define FOREIGN_KEY(x) <color:blue>x</color>
+!define NOT_NULL(x) <u>x</u>
+
+package "核心数据模型" {
+
+  class JobSite {
+    PRIMARY_KEY(id): UUID
+    NOT_NULL(name): String
+    NOT_NULL(base_url): String
+    NOT_NULL(domain): String
+    site_type: String
+    language: String
+    country: String
+    is_active: Boolean
+    created_at: DateTime
+    updated_at: DateTime
+    --
+    + validate_url()
+    + get_robots_txt()
+  }
+
+  class SelectorConfig {
+    PRIMARY_KEY(id): UUID
+    FOREIGN_KEY(site_id): UUID
+    NOT_NULL(version): String
+    NOT_NULL(selectors): JSON
+    confidence_score: Float
+    validation_status: String
+    test_count: Integer
+    success_rate: Float
+    created_by: String
+    created_at: DateTime
+    is_active: Boolean
+    --
+    + validate_selectors()
+    + test_accuracy()
+    + update_confidence()
+  }
+
+  class Job {
+    PRIMARY_KEY(id): UUID
+    FOREIGN_KEY(site_id): UUID
+    FOREIGN_KEY(crawl_session_id): UUID
+    NOT_NULL(title): String
+    NOT_NULL(company_name): String
+    job_link: String
+    location: String
+    published_at: DateTime
+    job_description: Text
+    salary_range: String
+    job_type: String
+    experience_level: String
+    skills_required: Array[String]
+    remote_option: Boolean
+    raw_data: JSON
+    extracted_at: DateTime
+    data_quality_score: Float
+    --
+    + clean_description()
+    + extract_skills()
+    + normalize_location()
+  }
+
+  class CrawlSession {
+    PRIMARY_KEY(id): UUID
+    FOREIGN_KEY(site_id): UUID
+    FOREIGN_KEY(selector_config_id): UUID
+    NOT_NULL(start_url): String
+    status: String
+    total_pages: Integer
+    pages_crawled: Integer
+    jobs_found: Integer
+    jobs_saved: Integer
+    errors_count: Integer
+    started_at: DateTime
+    completed_at: DateTime
+    duration_seconds: Integer
+    user_agent: String
+    proxy_used: String
+    notes: Text
+    --
+    + calculate_success_rate()
+    + generate_report()
+  }
+
+  class CrawlLog {
+    PRIMARY_KEY(id): UUID
+    FOREIGN_KEY(session_id): UUID
+    log_level: String
+    message: Text
+    page_url: String
+    error_type: String
+    stack_trace: Text
+    screenshot_path: String
+    timestamp: DateTime
+    context_data: JSON
+    --
+    + categorize_error()
+    + extract_insights()
+  }
+
+  class ExportJob {
+    PRIMARY_KEY(id): UUID
+    FOREIGN_KEY(session_id): UUID
+    format: String
+    filter_criteria: JSON
+    file_path: String
+    file_size: Integer
+    record_count: Integer
+    status: String
+    requested_at: DateTime
+    completed_at: DateTime
+    download_count: Integer
+    expires_at: DateTime
+    --
+    + generate_file()
+    + cleanup_expired()
+  }
+
+}
+
+package "AI 和配置模型" {
+
+  class AIAnalysisResult {
+    PRIMARY_KEY(id): UUID
+    FOREIGN_KEY(site_id): UUID
+    url_analyzed: String
+    html_snapshot: Text
+    screenshot_path: String
+    ai_model_used: String
+    confidence_score: Float
+    detected_elements: JSON
+    suggested_selectors: JSON
+    analysis_notes: Text
+    processing_time_ms: Integer
+    analyzed_at: DateTime
+    --
+    + validate_analysis()
+    + compare_with_manual()
+  }
+
+  class SiteTemplate {
+    PRIMARY_KEY(id): UUID
+    name: String
+    description: Text
+    selector_patterns: JSON
+    common_elements: JSON
+    validation_rules: JSON
+    applicable_domains: Array[String]
+    usage_count: Integer
+    success_rate: Float
+    created_at: DateTime
+    --
+    + match_site()
+    + suggest_adaptations()
+  }
+
+  class UserFeedback {
+    PRIMARY_KEY(id): UUID
+    FOREIGN_KEY(selector_config_id): UUID
+    feedback_type: String
+    original_selector: String
+    suggested_selector: String
+    accuracy_rating: Integer
+    comments: Text
+    user_email: String
+    submitted_at: DateTime
+    processed: Boolean
+    --
+    + analyze_feedback()
+    + update_ml_model()
+  }
+
+}
+
+package "监控和性能模型" {
+
+  class PerformanceMetric {
+    PRIMARY_KEY(id): UUID
+    FOREIGN_KEY(session_id): UUID
+    metric_name: String
+    metric_value: Float
+    metric_unit: String
+    measurement_time: DateTime
+    context: JSON
+    --
+    + aggregate_metrics()
+    + detect_anomalies()
+  }
+
+  class SiteHealth {
+    PRIMARY_KEY(id): UUID
+    FOREIGN_KEY(site_id): UUID
+    last_check: DateTime
+    response_time_ms: Integer
+    is_accessible: Boolean
+    structure_changed: Boolean
+    anti_bot_detected: Boolean
+    health_score: Float
+    issues_detected: Array[String]
+    --
+    + check_health()
+    + update_status()
+  }
+
+}
+
+' 关系定义
+JobSite ||--o{ SelectorConfig : "has multiple versions"
+JobSite ||--o{ Job : "contains jobs"
+JobSite ||--o{ CrawlSession : "crawled by"
+JobSite ||--o{ AIAnalysisResult : "analyzed by AI"
+JobSite ||--o{ SiteHealth : "monitored"
+
+SelectorConfig ||--o{ CrawlSession : "used in"
+SelectorConfig ||--o{ UserFeedback : "receives feedback"
+
+CrawlSession ||--o{ Job : "extracts"
+CrawlSession ||--o{ CrawlLog : "generates logs"
+CrawlSession ||--o{ ExportJob : "exported as"
+CrawlSession ||--o{ PerformanceMetric : "measures"
+
+AIAnalysisResult ||--o{ SelectorConfig : "generates"
+
+' 关键约束和索引
+note right of Job
+  索引:
+  - (site_id, extracted_at)
+  - (company_name, title)
+  - (location, published_at)
+  
+  约束:
+  - job_link必须是有效URL
+  - published_at不能晚于extracted_at
+end note
+
+note right of SelectorConfig
+  版本控制:
+  - 每个site只能有一个active版本
+  - 版本号遵循语义化版本控制
+  - 变更必须记录详细日志
+end note
+
+note right of CrawlSession
+  状态枚举:
+  - PENDING: 等待开始
+  - RUNNING: 正在爬取
+  - COMPLETED: 成功完成
+  - FAILED: 失败
+  - CANCELLED: 用户取消
+end note
+
+@enduml

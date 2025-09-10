@@ -1,0 +1,115 @@
+{
+  // Python解释器配置
+  "python.interpreter.infoVisibility": "onPythonRelated",
+  "python.defaultInterpreterPath": "./venv/bin/python",
+  // 测试配置
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": [
+    "tests/"
+  ],
+  "python.testing.autoTestDiscoverOnSaveEnabled": true,
+  // 代码格式化
+  "python.formatting.provider": "black",
+  "python.formatting.blackArgs": [
+    "--line-length=88"
+  ],
+  // 代码检查
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": false,
+  "python.linting.flake8Enabled": true,
+  "python.linting.mypyEnabled": true,
+  "python.linting.flake8Args": [
+    "--max-line-length=88",
+    "--extend-ignore=E203,W503"
+  ],
+  // 自动导入排序
+  "python.sortImports.args": [
+    "--profile=black"
+  ],
+  // 调试配置
+  "python.terminal.activateEnvironment": true,
+  "python.terminal.activateEnvInCurrentTerminal": true,
+  // 文件保存时自动格式化
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  // Python文件特定设置
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.python",
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.rulers": [
+      88
+    ],
+    "editor.trimAutoWhitespace": true
+  },
+  // JSON文件格式化
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // Markdown文件设置
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off"
+    }
+  },
+  // 文件监控
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/*/**": true,
+    "**/.hg/store/**": true,
+    "**/venv/**": true,
+    "**/__pycache__/**": true,
+    "**/.pytest_cache/**": true,
+    "**/htmlcov/**": true,
+    "**/.coverage": true
+  },
+  // 文件关联
+  "files.associations": {
+    "*.env": "properties",
+    "*.env.*": "properties",
+    "Dockerfile*": "dockerfile",
+    "*.yml": "yaml",
+    "*.yaml": "yaml"
+  },
+  // 终端配置
+  "terminal.integrated.env.osx": {
+    "PYTHONPATH": "${workspaceFolder}"
+  },
+  "terminal.integrated.env.linux": {
+    "PYTHONPATH": "${workspaceFolder}"
+  },
+  "terminal.integrated.env.windows": {
+    "PYTHONPATH": "${workspaceFolder}"
+  },
+  // 搜索排除
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    "**/venv": true,
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/htmlcov": true,
+    "**/.git": true,
+    "**/.coverage": true,
+    "**/logs": true,
+    "**/exports": true,
+    "**/screenshots": true
+  },
+  // 智能感知
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.completeFunctionParens": true,
+  // Jupyter笔记本
+  "jupyter.askForKernelRestart": false,
+  "jupyter.interactiveWindow.textEditor.executeSelection": true,
+  // Git配置
+  "git.ignoreLimitWarning": true
+}

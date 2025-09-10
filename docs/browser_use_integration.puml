@@ -1,0 +1,225 @@
+@startuml Browser_Use_Integration
+
+title Browser-use集成架构方案
+
+package "Browser-use集成层" {
+
+  class BrowserController {
+    + initialize_browser(config: BrowserConfig) -> Browser
+    + navigate_to_url(url: str) -> NavigationResult
+    + execute_crawling_task(task: CrawlTask) -> CrawlResult
+    + handle_anti_bot_detection() -> bool
+    + cleanup_browser_session() -> None
+    --
+    - browser_instance: Browser
+    - current_page: Page
+    - session_config: SessionConfig
+  }
+
+  class TaskExecutor {
+    + execute_job_extraction(selectors: Dict) -> List[Job]
+    + handle_pagination(next_selector: str) -> bool
+    + wait_for_dynamic_content() -> None
+    + take_debugging_screenshot() -> str
+    + handle_popups_and_modals() -> None
+    --
+    - extraction_strategies: List[Strategy]
+    - error_recovery_handlers: Dict
+  }
+
+  class AntiDetectionManager {
+    + configure_stealth_mode() -> None
+    + rotate_user_agents() -> str
+    + manage_request_delays() -> None
+    + handle_captcha_detection() -> bool
+    + simulate_human_behavior() -> None
+    --
+    - user_agent_pool: List[str]
+    - proxy_manager: ProxyManager
+    - behavior_patterns: List[Pattern]
+  }
+
+  class ProxyManager {
+    + get_available_proxy() -> ProxyConfig
+    + rotate_proxy() -> bool
+    + test_proxy_health(proxy: ProxyConfig) -> bool
+    + handle_proxy_failure() -> None
+    --
+    - proxy_pool: List[ProxyConfig]
+    - health_checker: HealthChecker
+    - rotation_strategy: RotationStrategy
+  }
+
+}
+
+package "Browser-use Agent配置" {
+
+  class BrowserAgent {
+    + create_agent(task_description: str) -> Agent
+    + configure_capabilities() -> AgentConfig
+    + set_extraction_instructions() -> Instructions
+    + handle_dynamic_scenarios() -> Response
+    --
+    - llm_model: str
+    - task_context: TaskContext
+    - extraction_prompt: str
+  }
+
+  class AgentPrompts {
+    + job_extraction_prompt() -> str
+    + pagination_handling_prompt() -> str
+    + error_recovery_prompt() -> str
+    + data_validation_prompt() -> str
+    --
+    JOB_EXTRACTION_TEMPLATE: str
+    PAGINATION_TEMPLATE: str
+    ERROR_HANDLING_TEMPLATE: str
+  }
+
+  class TaskContext {
+    + build_extraction_context(selectors: Dict) -> str
+    + build_pagination_context(strategy: str) -> str
+    + build_error_context(error: Exception) -> str
+    + update_context_from_feedback() -> None
+    --
+    - current_url: str
+    - page_state: PageState
+    - extraction_history: List[ExtractionResult]
+  }
+
+}
+
+package "智能错误处理" {
+
+  class ErrorRecoverySystem {
+    + handle_selector_failure(selector: str) -> str
+    + handle_network_timeout() -> bool
+    + handle_javascript_error() -> bool
+    + handle_page_structure_change() -> bool
+    --
+    - fallback_strategies: List[Strategy]
+    - retry_configurations: Dict
+  }
+
+  class DynamicSelectorAdapter {
+    + adapt_selector_for_current_page(original: str) -> str
+    + find_alternative_selectors(target_element: str) -> List[str]
+    + validate_selector_effectiveness(selector: str) -> float
+    + learn_from_selector_failures() -> None
+    --
+    - selector_variations: Dict
+    - effectiveness_scores: Dict
+  }
+
+  class PageStateMonitor {
+    + monitor_page_loading() -> LoadingState
+    + detect_layout_changes() -> bool
+    + track_javascript_completion() -> bool
+    + identify_dynamic_content_updates() -> List[Update]
+    --
+    - mutation_observer: MutationObserver
+    - performance_monitor: PerformanceMonitor
+  }
+
+}
+
+package "性能优化" {
+
+  class ResourceOptimizer {
+    + optimize_page_loading() -> None
+    + block_unnecessary_resources() -> None
+    + configure_caching_strategy() -> None
+    + minimize_memory_usage() -> None
+    --
+    - resource_filters: List[Filter]
+    - caching_rules: Dict
+    - memory_limits: MemoryConfig
+  }
+
+  class ConcurrencyManager {
+    + manage_parallel_sessions() -> None
+    + coordinate_browser_instances() -> None
+    + balance_resource_usage() -> None
+    + handle_session_conflicts() -> None
+    --
+    - session_pool: List[BrowserSession]
+    - resource_allocator: ResourceAllocator
+    - conflict_resolver: ConflictResolver
+  }
+
+}
+
+' 组件关系
+BrowserController --> TaskExecutor : "执行爬取任务"
+BrowserController --> AntiDetectionManager : "配置反检测"
+BrowserController --> ProxyManager : "管理代理"
+
+TaskExecutor --> BrowserAgent : "使用AI代理"
+TaskExecutor --> ErrorRecoverySystem : "处理错误"
+TaskExecutor --> PageStateMonitor : "监控页面状态"
+
+BrowserAgent --> AgentPrompts : "获取提示模板"
+BrowserAgent --> TaskContext : "构建任务上下文"
+
+ErrorRecoverySystem --> DynamicSelectorAdapter : "适配选择器"
+AntiDetectionManager --> ProxyManager : "轮换代理"
+
+BrowserController --> ResourceOptimizer : "优化性能"
+BrowserController --> ConcurrencyManager : "管理并发"
+
+' 详细配置示例
+note right of BrowserAgent
+  Agent配置示例:
+  {
+    "model": "gpt-4-vision-preview",
+    "task": "Extract job listings from page",
+    "capabilities": [
+      "CSS selector usage",
+      "Dynamic content handling",
+      "Pagination navigation",
+      "Error recovery"
+    ],
+    "constraints": [
+      "Respect robots.txt",
+      "Human-like behavior",
+      "Data accuracy priority"
+    ]
+  }
+end note
+
+note right of AntiDetectionManager
+  反检测策略:
+  1. 随机User-Agent轮换
+  2. 模拟人类滚动行为
+  3. 随机请求延迟(1-3秒)
+  4. Cookie和Session管理
+  5. 代理IP轮换
+  6. JavaScript指纹伪装
+  7. Canvas指纹随机化
+end note
+
+note right of TaskExecutor
+  执行流程:
+  1. 页面导航和等待加载
+  2. 处理弹窗和Cookie同意
+  3. 等待动态内容渲染
+  4. 执行数据提取
+  5. 验证提取结果
+  6. 处理分页逻辑
+  7. 错误恢复和重试
+end note
+
+note as IntegrationFlow
+  集成流程:
+  用户 -> API服务 : 提交爬取任务
+  API服务 -> Browser Controller : 初始化浏览器会话
+  Browser Controller -> Anti-Detection : 配置反检测策略
+  Browser Controller -> Browser Agent : 创建AI代理
+  Browser Agent -> Task Executor : 执行数据提取
+  Task Executor -> Browser Agent : 返回提取结果
+  Browser Agent -> Browser Controller : 完成任务
+  Browser Controller -> API服务 : 返回爬取数据
+  API服务 -> 用户 : 返回结构化数据
+end note
+
+@enduml

@@ -1,0 +1,120 @@
+@startuml AI_Crawler_Workflow
+
+title AI Crawler Assistant - 工作流程图
+
+actor User as "用户"
+participant API as "FastAPI Server"
+participant Analyzer as "Page Analyzer"
+participant AIService as "OpenAI GPT-4"
+participant SelectorGen as "Selector Generator"
+participant BrowserCtrl as "Browser Controller"
+participant BrowserUse as "browser-use Agent"
+participant DataExtractor as "Data Extractor"
+participant DataProcessor as "Data Processor"
+participant Database as "Database"
+
+== 阶段1: URL分析和选择器生成 ==
+
+User -> API : POST /analyze-url\n{url: "job-site.com/jobs"}
+activate API
+
+API -> Analyzer : analyze_page(url)
+activate Analyzer
+
+Analyzer -> BrowserUse : load_page(url)
+activate BrowserUse
+BrowserUse -> BrowserUse : 模拟真实用户访问
+BrowserUse --> Analyzer : page_content, screenshot
+deactivate BrowserUse
+
+Analyzer -> AIService : analyze_structure(html, screenshot)
+activate AIService
+note right : 使用GPT-4分析页面结构\n识别职位列表、职位项等元素
+AIService --> Analyzer : structure_analysis
+deactivate AIService
+
+Analyzer -> SelectorGen : generate_selectors(structure_analysis)
+activate SelectorGen
+SelectorGen -> SelectorGen : 生成CSS选择器配置
+SelectorGen --> Analyzer : selectors_config
+deactivate SelectorGen
+
+Analyzer -> Database : save_selectors(url, selectors)
+Analyzer --> API : selectors_response
+deactivate Analyzer
+
+API --> User : {\n  "selectors": {\n    "jobList": ".jobs-container",\n    "jobItem": ".job-card",\n    "jobTitle": "h3.job-title",\n    "jobLink": "a.job-link",\n    "companyName": ".company-name",\n    "publishedAt": ".publish-date",\n    "location": ".job-location",\n    "jobDescription": ".job-summary",\n    "nextPage": ".pagination .next"\n  },\n  "confidence": 0.95\n}
+deactivate API
+
+== 阶段2: 用户确认和爬取启动 ==
+
+User -> API : POST /start-crawling\n{url, selectors, options}
+activate API
+
+API -> BrowserCtrl : start_crawling(url, selectors, options)
+activate BrowserCtrl
+
+== 阶段3: 数据爬取循环 ==
+
+loop 多页面爬取
+    BrowserCtrl -> BrowserUse : navigate_to_page(current_url)
+    activate BrowserUse
+    
+    BrowserUse -> BrowserUse : 等待页面加载完成
+    BrowserUse -> BrowserUse : 处理可能的弹窗/验证
+    BrowserUse --> BrowserCtrl : page_ready
+    deactivate BrowserUse
+    
+    BrowserCtrl -> DataExtractor : extract_jobs(selectors)
+    activate DataExtractor
+    
+    DataExtractor -> DataExtractor : 使用CSS选择器提取数据
+    DataExtractor -> DataExtractor : 验证数据完整性
+    DataExtractor --> BrowserCtrl : job_data[]
+    deactivate DataExtractor
+    
+    BrowserCtrl -> DataProcessor : process_batch(job_data)
+    activate DataProcessor
+    DataProcessor -> DataProcessor : 数据清洗和标准化
+    DataProcessor -> Database : save_jobs(processed_data)
+    DataProcessor --> BrowserCtrl : processing_result
+    deactivate DataProcessor
+    
+    BrowserCtrl -> BrowserUse : check_next_page(nextPage_selector)
+    activate BrowserUse
+    alt 存在下一页
+        BrowserUse -> BrowserUse : click_next_page()
+        BrowserUse --> BrowserCtrl : next_page_url
+    else 无下一页
+        BrowserUse --> BrowserCtrl : no_more_pages
+    end
+    deactivate BrowserUse
+end
+
+== 阶段4: 数据导出和响应 ==
+
+BrowserCtrl -> DataProcessor : generate_export(format, filter)
+activate DataProcessor
+DataProcessor -> Database : query_jobs(filter)
+DataProcessor -> DataProcessor : format_data(format)
+DataProcessor --> BrowserCtrl : export_file_path
+deactivate DataProcessor
+
+BrowserCtrl --> API : crawling_result
+deactivate BrowserCtrl
+
+API --> User : {\n  "status": "completed",\n  "total_jobs": 150,\n  "pages_crawled": 5,\n  "export_url": "/download/jobs.json",\n  "summary": {\n    "companies": 45,\n    "locations": ["北京", "上海", "深圳"],\n    "job_types": ["全职", "兼职"]\n  }\n}
+deactivate API
+
+== 错误处理流程 ==
+
+note over API, Database
+  错误处理机制:
+  1. 网络错误: 重试机制 (最多3次)
+  2. 选择器失效: AI重新分析页面
+  3. 反爬虫检测: 切换代理/延迟策略
+  4. 数据格式错误: 记录并继续处理其他数据
+  5. 系统异常: 详细日志记录并通知用户
+end note
+
+@enduml

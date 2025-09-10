@@ -1,0 +1,57 @@
+{
+  "recommendations": [
+    // Python开发核心扩展
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-python.debugpy",
+    // 代码格式化和检查
+    "ms-python.black-formatter",
+    "ms-python.isort",
+    "ms-python.flake8",
+    // 测试支持
+    "ms-python.pytest",
+    // Git和版本控制
+    "eamodio.gitlens",
+    // Docker支持
+    "ms-azuretools.vscode-docker",
+    // 文件图标
+    "vscode-icons-team.vscode-icons",
+    // Markdown支持
+    "yzhang.markdown-all-in-one",
+    "shd101wyy.markdown-preview-enhanced",
+    // JSON和YAML支持
+    "redhat.vscode-yaml",
+    // REST API测试
+    "humao.rest-client",
+    // 环境变量支持
+    "mikestead.dotenv",
+    // 代码拼写检查
+    "streetsidesoftware.code-spell-checker",
+    // 路径智能感知
+    "christian-kohler.path-intellisense",
+    // 括号匹配
+    "CoenraadS.bracket-pair-colorizer-2",
+    // 缩进指南
+    "oderwat.indent-rainbow",
+    // 文件跳转
+    "antfu.goto-alias",
+    // AI助手
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
+    // 主题
+    "dracula-theme.theme-dracula",
+    "PKief.material-icon-theme",
+    // Jupyter支持
+    "ms-toolsai.jupyter",
+    "ms-toolsai.jupyter-keymap",
+    "ms-toolsai.jupyter-renderers",
+    // SQLite查看器
+    "alexcvzz.vscode-sqlite",
+    // 正则表达式预览
+    "chrmarti.regex",
+    // TODO高亮
+    "Gruntfuggly.todo-tree",
+    // 书签
+    "alefragnani.Bookmarks"
+  ]
+}

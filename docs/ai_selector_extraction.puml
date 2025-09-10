@@ -1,0 +1,184 @@
+@startuml AI_Selector_Extraction
+
+title AI驱动的选择器提取机制
+
+package "AI选择器提取系统" {
+
+  class PageAnalyzer {
+    + analyze_page(url: str) -> AnalysisResult
+    + extract_dom_tree(html: str) -> DOMTree
+    + take_screenshot(url: str) -> Image
+    + identify_semantic_blocks() -> List[SemanticBlock]
+    --
+    - preprocess_html()
+    - normalize_structure()
+    - detect_framework()
+  }
+
+  class SemanticAnalyzer {
+    + identify_job_list(dom: DOMTree) -> List[Element]
+    + identify_job_items(container: Element) -> List[Element]
+    + classify_element_purpose(element: Element) -> ElementType
+    + analyze_text_patterns() -> TextPatterns
+    --
+    - use_nlp_models()
+    - apply_heuristics()
+    - pattern_matching()
+  }
+
+  class VisualAnalyzer {
+    + analyze_layout(screenshot: Image) -> LayoutAnalysis
+    + detect_visual_blocks() -> List[VisualBlock]
+    + identify_repeated_patterns() -> List[Pattern]
+    + map_visual_to_dom(visual_blocks, dom) -> Mapping
+    --
+    - computer_vision_processing()
+    - layout_detection()
+    - similarity_analysis()
+  }
+
+  class AIOrchestrator {
+    + generate_selectors(analysis_data: AnalysisData) -> SelectorConfig
+    + validate_selectors(selectors: SelectorConfig) -> ValidationResult
+    + optimize_selectors(feedback: Feedback) -> OptimizedSelectors
+    + learn_from_feedback(feedback: UserFeedback) -> None
+    --
+    - call_openai_api()
+    - combine_analyses()
+    - apply_ml_models()
+  }
+
+  class SelectorGenerator {
+    + create_css_selectors(elements: List[Element]) -> Dict[str, str]
+    + optimize_selector_specificity() -> str
+    + test_selector_stability() -> float
+    + generate_fallback_selectors() -> List[str]
+    --
+    - calculate_specificity()
+    - test_uniqueness()
+    - validate_robustness()
+  }
+
+  class ValidationEngine {
+    + validate_selector_accuracy(selectors: Dict) -> ValidationReport
+    + test_cross_page_stability() -> StabilityReport
+    + measure_extraction_completeness() -> CompletenessReport
+    + benchmark_performance() -> PerformanceReport
+    --
+    - sample_multiple_pages()
+    - compare_extractions()
+    - statistical_analysis()
+  }
+
+}
+
+package "AI提示工程" {
+
+  class PromptTemplates {
+    + job_list_identification_prompt() -> str
+    + job_item_analysis_prompt() -> str
+    + selector_generation_prompt() -> str
+    + validation_prompt() -> str
+    --
+    PAGE_ANALYSIS_TEMPLATE: str
+    SELECTOR_GENERATION_TEMPLATE: str
+    VALIDATION_TEMPLATE: str
+  }
+
+  class ContextBuilder {
+    + build_analysis_context(html, screenshot) -> str
+    + build_selector_context(elements) -> str
+    + build_validation_context(results) -> str
+    + format_examples(site_type) -> str
+    --
+    - extract_key_features()
+    - format_html_structure()
+    - prepare_visual_description()
+  }
+
+}
+
+package "学习和优化" {
+
+  class FeedbackProcessor {
+    + process_user_corrections(feedback: UserFeedback) -> ProcessedFeedback
+    + analyze_selector_failures() -> FailureAnalysis
+    + extract_learning_patterns() -> LearningPatterns
+    + update_training_data() -> None
+    --
+    - categorize_errors()
+    - identify_common_patterns()
+    - generate_training_examples()
+  }
+
+  class ModelTrainer {
+    + train_element_classifier() -> ClassifierModel
+    + train_selector_predictor() -> PredictorModel
+    + fine_tune_gpt_model() -> FineTunedModel
+    + evaluate_model_performance() -> EvaluationMetrics
+    --
+    - prepare_training_data()
+    - hyperparameter_tuning()
+    - cross_validation()
+  }
+
+  class KnowledgeBase {
+    + store_site_patterns(site: str, patterns: Dict) -> None
+    + retrieve_similar_sites(features: SiteFeatures) -> List[SitePattern]
+    + update_selector_success_rates() -> None
+    + get_best_practices(site_type: str) -> BestPractices
+    --
+    - similarity_matching()
+    - pattern_clustering()
+    - success_tracking()
+  }
+
+}
+
+' 数据流和关系
+PageAnalyzer --> SemanticAnalyzer : "DOM结构"
+PageAnalyzer --> VisualAnalyzer : "页面截图"
+SemanticAnalyzer --> AIOrchestrator : "语义分析结果"
+VisualAnalyzer --> AIOrchestrator : "视觉分析结果"
+
+AIOrchestrator --> PromptTemplates : "获取提示模板"
+AIOrchestrator --> ContextBuilder : "构建上下文"
+AIOrchestrator --> SelectorGenerator : "生成选择器"
+
+SelectorGenerator --> ValidationEngine : "验证选择器"
+ValidationEngine --> FeedbackProcessor : "验证结果"
+
+FeedbackProcessor --> ModelTrainer : "训练数据"
+ModelTrainer --> KnowledgeBase : "更新知识库"
+KnowledgeBase --> AIOrchestrator : "历史模式"
+
+' 详细工作流程
+note right of PageAnalyzer
+  页面分析步骤:
+  1. 获取完整HTML源码
+  2. 等待JavaScript渲染完成
+  3. 截取页面截图
+  4. 提取DOM树结构
+  5. 识别语义化区块
+end note
+
+note right of  AIOrchestrator
+  AI处理流程:
+  1. 整合多源分析数据
+  2. 调用GPT-4 API分析
+  3. 生成结构化提示
+  4. 解析AI响应
+  5. 生成选择器配置
+  6. 执行验证和优化
+end note
+
+note right of  ValidationEngine
+  验证机制:
+  1. 单页面准确性测试
+  2. 多页面稳定性测试
+  3. 数据完整性检查
+  4. 性能基准测试
+  5. 边界情况处理
+end note
+
+@enduml
