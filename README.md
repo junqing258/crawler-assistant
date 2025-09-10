@@ -528,13 +528,6 @@ tail -f /var/log/crawler-assistant/error.log
 - [FastAPI](https://fastapi.tiangolo.com/) - 现代化的 Web 框架
 - [Playwright](https://playwright.dev/) - 可靠的浏览器自动化
 
-## 📞 支持
-
-- 📧 邮箱: support@example.com
-- 💬 微信群: [扫码加入](qr-code-link)
-- 📚 文档: [在线文档](https://docs.example.com)
-- 🐛 问题反馈: [GitHub Issues](https://github.com/your-username/ai-crawler-assistant/issues)
-
 ---
 
 <div align="center">
