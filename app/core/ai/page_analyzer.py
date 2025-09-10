@@ -1,16 +1,18 @@
 """页面分析器"""
 
-import json
-import time
 import base64
-from io import BytesIO
-from typing import Dict, Any, Optional, Tuple
+import json
+import logging
+import time
 from dataclasses import dataclass
+from io import BytesIO
+from typing import Any, Dict, Optional, Tuple
+
 from bs4 import BeautifulSoup
 from openai import AsyncOpenAI
+
 from app.config import settings
 from app.core.ai.prompt_templates import PromptTemplates
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -145,7 +147,7 @@ class PageAnalyzer:
 
         # 移除注释
         from bs4 import Comment
-        for comment in soup.find_all(text=lambda text: isinstance(text, Comment)):
+        for comment in soup.find_all(string=lambda text: isinstance(text, Comment)):
             comment.extract()
 
         # 压缩空白字符
